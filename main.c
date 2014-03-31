@@ -66,6 +66,12 @@ int main() {
 
 		unsigned long score = atol(buf);
 		char *ptr = buf;
+
+		ptr = strchr(ptr, '\n');
+		if (ptr) *ptr = '\0';
+
+		ptr = buf;
+
 		while (*ptr != ' ' && *ptr) ptr++;
 		ptr++;
 
