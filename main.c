@@ -16,7 +16,7 @@ struct entry {
 	struct rb_node node;
 };
 
-void insert(struct rb_root *root, struct entry *data) {
+void insert_rb(struct rb_root *root, struct entry *data) {
 
 	struct rb_node **new = &root->rb_node, *parent = NULL;
 
@@ -72,10 +72,30 @@ int main() {
 		struct entry *new = calloc(1, sizeof(struct entry));
 		new->score = score;
 		strncpy(new->value, ptr, 10);
+		INIT_LIST_HEAD(&new->list);
+
+		struct entry *test = search(&tree, score);
+		if (!test) {
+			insert_rb(&tree, new);
+		} else {
+			list_add_tail(&new->list, &test->list);
+		}
 	}
 
-	while (1) {
-	
+	puts("Cool, now checking 'em");
+
+	struct rb_node *it = rb_first(&tree);
+	for (; it; it = rb_next(it)) {
+		struct entry *cur = container_of(it, struct entry, node);
+		printf("Score %lu val %s\n", cur->score, cur->value);
+
+		if (!list_empty(&cur->list)) {
+			struct list_head *pos;
+			list_for_each(pos, &cur->list) {
+				cur = container_of(pos, struct entry, list);
+				printf("Score %lu val %s\n", cur->score, cur->value);
+			}
+		}
 	}
 
 	return 0;
