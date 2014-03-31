@@ -27,7 +27,7 @@ void insert_rb(struct rb_root *root, struct entry *data) {
 		if (data->score < this->score)
 			new = &((*new)->rb_left);
 		else if (data->score > this->score)
-			new = &((*new)->rb_left);
+			new = &((*new)->rb_right);
 		else
 			return;
 	}
@@ -46,7 +46,7 @@ struct entry *search(struct rb_root *root, unsigned long score) {
 		if (score < this->score)
 			new = &((*new)->rb_left);
 		else if (score > this->score)
-			new = &((*new)->rb_left);
+			new = &((*new)->rb_right);
 		else
 			return this;
 	}
