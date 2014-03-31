@@ -66,7 +66,7 @@ int main() {
 
 		unsigned long score = atol(buf);
 		char *ptr = buf;
-		while (*ptr != ' ' && *ptr);
+		while (*ptr != ' ' && *ptr) ptr++;
 		ptr++;
 
 		struct entry *new = calloc(1, sizeof(struct entry));
