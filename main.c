@@ -96,10 +96,10 @@ int main() {
 		printf("Score %lu val %s\n", cur->score, cur->value);
 
 		if (!list_empty(&cur->list)) {
-			struct list_head *pos;
-			list_for_each(pos, &cur->list) {
-				cur = container_of(pos, struct entry, list);
-				printf("Score %lu val %s\n", cur->score, cur->value);
+			struct entry *mine;
+			struct list_head *tgt = &cur->list;
+			list_for_each_entry(mine, &cur->list, list) {
+				printf("Score %lu val %s\n", mine->score, mine->value);
 			}
 		}
 	}
