@@ -43,15 +43,13 @@ int main() {
 		strncpy(new->value, ptr, 10);
 		INIT_LIST_HEAD(&new->list);
 
-		struct entry *test = search(&tree, score);
-		if (!test) {
-			insert_rb(&tree, new);
-		} else {
-			list_add_tail(&new->list, &test->list);
-		}
+		ttm_prio_add(&tree, new);
 	}
 
-	puts("Cool, now checking 'em");
+	struct entry *tmp = ttm_prio_query_lowest(&tree);
+	if (tmp) ttm_prio_remove(&tree, tmp);
+
+	puts("Removed first. Cool, now checking 'em");
 
 	struct rb_node *it = rb_first(&tree);
 	for (; it; it = rb_next(it)) {
