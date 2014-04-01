@@ -3,6 +3,7 @@
 #include <string.h>
 #include "rbtree.h"
 #include "list.h"
+#include "ttm_priority.h"
 
 #define container_of(ptr, type, member) ({                      \
 	const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
@@ -15,44 +16,6 @@ struct entry {
 	struct list_head list;
 	struct rb_node node;
 };
-
-void insert_rb(struct rb_root *root, struct entry *data) {
-
-	struct rb_node **new = &root->rb_node, *parent = NULL;
-
-	while (*new) {
-		struct entry *this = container_of(*new, struct entry, node);
-		parent = *new;
-
-		if (data->score < this->score)
-			new = &((*new)->rb_left);
-		else if (data->score > this->score)
-			new = &((*new)->rb_right);
-		else
-			return;
-	}
-
-	rb_link_node(&data->node, parent, new);
-	rb_insert_color(&data->node, root);
-}
-
-struct entry *search(struct rb_root *root, unsigned long score) {
-
-	struct rb_node **new = &root->rb_node;
-
-	while (*new) {
-		struct entry *this = container_of(*new, struct entry, node);
-
-		if (score < this->score)
-			new = &((*new)->rb_left);
-		else if (score > this->score)
-			new = &((*new)->rb_right);
-		else
-			return this;
-	}
-
-	return NULL;
-}
 
 int main() {
 
