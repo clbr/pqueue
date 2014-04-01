@@ -57,8 +57,8 @@ int main() {
 		if (!list_empty(&cur->list)) {
 			struct ttm_pqueue_entry *mine;
 			list_for_each_entry(mine, &cur->list, list) {
-				foo = container_of(cur, struct entry, p);
-				printf("Score %llu val %s\n", mine->score, foo->value);
+				foo = container_of(mine, struct entry, p);
+				printf("underScore %llu val %s\n", mine->score, foo->value);
 			}
 		}
 	}
