@@ -26,32 +26,18 @@
  **************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "rbtree.h"
-#include "list.h"
+#include "ttm_priority.h"
 
 #define container_of(ptr, type, member) ({                      \
 	const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
 	(type *)( (char *)__mptr - offsetof(type,member) );})
 
-typedef unsigned long u64;
-
-struct entry {
-	unsigned long score;
-	char value[10];
-
-	struct list_head list;
-	struct rb_node node;
-};
-
-static void ttm_prio_insert_rb(struct rb_root *root, struct entry *data)
+static void ttm_prio_insert_rb(struct rb_root *root, struct ttm_pqueue_entry *data)
 {
 	struct rb_node **new = &root->rb_node, *parent = NULL;
 
 	while (*new) {
-		struct entry *this = container_of(*new, struct entry, node);
+		struct ttm_pqueue_entry *this = container_of(*new, struct ttm_pqueue_entry, node);
 		parent = *new;
 
 		if (data->score < this->score)
@@ -66,12 +52,12 @@ static void ttm_prio_insert_rb(struct rb_root *root, struct entry *data)
 	rb_insert_color(&data->node, root);
 }
 
-static struct entry *ttm_prio_search_rb(struct rb_root *root, unsigned long score)
+static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root, unsigned long score)
 {
 	struct rb_node **new = &root->rb_node;
 
 	while (*new) {
-		struct entry *this = container_of(*new, struct entry, node);
+		struct ttm_pqueue_entry *this = container_of(*new, struct ttm_pqueue_entry, node);
 
 		if (score < this->score)
 			new = &((*new)->rb_left);
@@ -84,9 +70,9 @@ static struct entry *ttm_prio_search_rb(struct rb_root *root, unsigned long scor
 	return NULL;
 }
 
-void ttm_prio_add(struct rb_root * const tree, struct entry * const entry)
+void ttm_prio_add(struct rb_root * const tree, struct ttm_pqueue_entry * const entry)
 {
-	struct entry *test = ttm_prio_search_rb(tree, entry->score);
+	struct ttm_pqueue_entry *test = ttm_prio_search_rb(tree, entry->score);
 
 	if (!test)
 		ttm_prio_insert_rb(tree, entry);
@@ -94,7 +80,7 @@ void ttm_prio_add(struct rb_root * const tree, struct entry * const entry)
 		list_add_tail(&entry->list, &test->list);
 }
 
-struct entry *ttm_prio_query_lowest(const struct rb_root * const root)
+struct ttm_pqueue_entry *ttm_prio_query_lowest(const struct rb_root * const root)
 {
 	struct rb_node *node;
 
@@ -102,15 +88,15 @@ struct entry *ttm_prio_query_lowest(const struct rb_root * const root)
 	if (!node)
 		return NULL;
 
-	return container_of(node, struct entry, node);
+	return container_of(node, struct ttm_pqueue_entry, node);
 }
 
-void ttm_prio_remove(struct rb_root * const tree, struct entry * const entry)
+void ttm_prio_remove(struct rb_root * const tree, struct ttm_pqueue_entry * const entry)
 {
 	if (list_empty(&entry->list)) {
 		rb_erase(&entry->node, tree);
 	} else {
-		struct entry *next = list_first_entry(&entry->list, struct entry, list);
+		struct ttm_pqueue_entry *next = list_first_entry(&entry->list, struct ttm_pqueue_entry, list);
 
 		rb_replace_node(&entry->node, &next->node, tree);
 		list_del_init(&entry->list);

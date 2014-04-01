@@ -28,14 +28,20 @@
 #ifndef TTM_PRIORITY_H
 #define TTM_PRIORITY_H
 
-struct entry;
-struct rb_root;
+#include "list.h"
+#include "rbtree.h"
+
+struct ttm_pqueue_entry {
+	struct rb_node node;
+	struct list_head list;
+	unsigned long long score;
+};
 
 /**
  * ttm_prio_add - add this bo to the priority queue
  */
 
-void ttm_prio_add(struct rb_root * const tree, struct entry * const entry);
+void ttm_prio_add(struct rb_root * const tree, struct ttm_pqueue_entry * const entry);
 
 /**
  * ttm_prio_query_lowest - return the bo with the lowest score
@@ -43,12 +49,12 @@ void ttm_prio_add(struct rb_root * const tree, struct entry * const entry);
  * Returns NULL if there are none.
  */
 
-struct entry *ttm_prio_query_lowest(const struct rb_root * const root);
+struct ttm_pqueue_entry *ttm_prio_query_lowest(const struct rb_root * const root);
 
 /**
  * ttm_prio_remove - remove a previously queried bo from the queue
  */
 
-void ttm_prio_remove(struct rb_root * const tree, struct entry * const entry);
+void ttm_prio_remove(struct rb_root * const tree, struct ttm_pqueue_entry * const entry);
 
 #endif
