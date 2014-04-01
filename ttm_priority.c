@@ -32,12 +32,15 @@
 	const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
 	(type *)( (char *)__mptr - offsetof(type,member) );})
 
-static void ttm_prio_insert_rb(struct rb_root *root, struct ttm_pqueue_entry *data)
+static void ttm_prio_insert_rb(struct rb_root *root,
+			       struct ttm_pqueue_entry *data)
 {
 	struct rb_node **new = &root->rb_node, *parent = NULL;
 
 	while (*new) {
-		struct ttm_pqueue_entry *this = container_of(*new, struct ttm_pqueue_entry, node);
+		struct ttm_pqueue_entry *this = container_of(*new,
+							     struct ttm_pqueue_entry,
+							     node);
 		parent = *new;
 
 		if (data->score < this->score)
@@ -52,12 +55,15 @@ static void ttm_prio_insert_rb(struct rb_root *root, struct ttm_pqueue_entry *da
 	rb_insert_color(&data->node, root);
 }
 
-static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root, unsigned long score)
+static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root,
+						   unsigned long score)
 {
 	struct rb_node **new = &root->rb_node;
 
 	while (*new) {
-		struct ttm_pqueue_entry *this = container_of(*new, struct ttm_pqueue_entry, node);
+		struct ttm_pqueue_entry *this = container_of(*new,
+							     struct ttm_pqueue_entry,
+							     node);
 
 		if (score < this->score)
 			new = &((*new)->rb_left);
@@ -70,7 +76,8 @@ static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root, unsigne
 	return NULL;
 }
 
-void ttm_prio_add(struct ttm_pqueue * const queue, struct ttm_pqueue_entry * const entry)
+void ttm_prio_add(struct ttm_pqueue * const queue,
+		  struct ttm_pqueue_entry * const entry)
 {
 	struct rb_root * const tree = &queue->tree;
 
@@ -96,14 +103,17 @@ struct ttm_pqueue_entry *ttm_prio_query_lowest(const struct ttm_pqueue * const q
 	return container_of(node, struct ttm_pqueue_entry, node);
 }
 
-void ttm_prio_remove(struct ttm_pqueue * const queue, struct ttm_pqueue_entry * const entry)
+void ttm_prio_remove(struct ttm_pqueue * const queue,
+		     struct ttm_pqueue_entry * const entry)
 {
 	struct rb_root * const tree = &queue->tree;
 
 	if (list_empty(&entry->list)) {
 		rb_erase(&entry->node, tree);
 	} else {
-		struct ttm_pqueue_entry *next = list_first_entry(&entry->list, struct ttm_pqueue_entry, list);
+		struct ttm_pqueue_entry *next = list_first_entry(&entry->list,
+								 struct ttm_pqueue_entry,
+								 list);
 
 		rb_replace_node(&entry->node, &next->node, tree);
 		list_del_init(&entry->list);
