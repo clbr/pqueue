@@ -10,11 +10,9 @@
 	(type *)( (char *)__mptr - offsetof(type,member) );})
 
 struct entry {
-	unsigned long score;
 	char value[10];
 
-	struct list_head list;
-	struct rb_node node;
+	struct ttm_pqueue_entry p;
 };
 
 int main() {
@@ -39,28 +37,28 @@ int main() {
 		ptr++;
 
 		struct entry *new = calloc(1, sizeof(struct entry));
-		new->score = score;
+		new->p.score = score;
 		strncpy(new->value, ptr, 10);
-		INIT_LIST_HEAD(&new->list);
 
-		ttm_prio_add(&tree, new);
+		ttm_prio_add(&tree, &new->p);
 	}
 
-	struct entry *tmp = ttm_prio_query_lowest(&tree);
+	struct ttm_pqueue_entry *tmp = ttm_prio_query_lowest(&tree);
 	if (tmp) ttm_prio_remove(&tree, tmp);
 
 	puts("Removed first. Cool, now checking 'em");
 
 	struct rb_node *it = rb_first(&tree);
 	for (; it; it = rb_next(it)) {
-		struct entry *cur = container_of(it, struct entry, node);
-		printf("Score %lu val %s\n", cur->score, cur->value);
+		struct ttm_pqueue_entry *cur = container_of(it, struct ttm_pqueue_entry, node);
+		struct entry *foo = container_of(cur, struct entry, p);
+		printf("Score %llu val %s\n", cur->score, foo->value);
 
 		if (!list_empty(&cur->list)) {
-			struct entry *mine;
-			struct list_head *tgt = &cur->list;
+			struct ttm_pqueue_entry *mine;
 			list_for_each_entry(mine, &cur->list, list) {
-				printf("Score %lu val %s\n", mine->score, mine->value);
+				foo = container_of(cur, struct entry, p);
+				printf("Score %llu val %s\n", mine->score, foo->value);
 			}
 		}
 	}

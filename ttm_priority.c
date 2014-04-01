@@ -72,6 +72,8 @@ static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root, unsigne
 
 void ttm_prio_add(struct rb_root * const tree, struct ttm_pqueue_entry * const entry)
 {
+	INIT_LIST_HEAD(&entry->list);
+
 	struct ttm_pqueue_entry *test = ttm_prio_search_rb(tree, entry->score);
 
 	if (!test)
