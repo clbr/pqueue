@@ -32,31 +32,19 @@
 	const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
 	(type *)( (char *)__mptr - offsetof(type,member) );})
 
-static void ttm_prio_insert_rb(struct rb_root *root,
-			       struct ttm_pqueue_entry *data)
+static void ttm_prio_insert_rb(struct rb_root * const root,
+			       struct ttm_pqueue_entry * const data,
+			       struct rb_node *parent,
+			       struct rb_node **where)
 {
-	struct rb_node **new = &root->rb_node, *parent = NULL;
-
-	while (*new) {
-		struct ttm_pqueue_entry *this = container_of(*new,
-							     struct ttm_pqueue_entry,
-							     node);
-		parent = *new;
-
-		if (data->score < this->score)
-			new = &((*new)->rb_left);
-		else if (data->score > this->score)
-			new = &((*new)->rb_right);
-		else
-			return; // bug_on fixme
-	}
-
-	rb_link_node(&data->node, parent, new);
+	rb_link_node(&data->node, parent, where);
 	rb_insert_color(&data->node, root);
 }
 
 static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root,
-						   unsigned long score)
+						   unsigned long score,
+						   struct rb_node **parent,
+						   struct rb_node ***where)
 {
 	struct rb_node **new = &root->rb_node;
 
@@ -64,6 +52,8 @@ static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root,
 		struct ttm_pqueue_entry *this = container_of(*new,
 							     struct ttm_pqueue_entry,
 							     node);
+
+		*parent = *new;
 
 		if (score < this->score)
 			new = &((*new)->rb_left);
@@ -73,6 +63,8 @@ static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root,
 			return this;
 	}
 
+	*where = new;
+
 	return NULL;
 }
 
@@ -80,13 +72,14 @@ void ttm_prio_add(struct ttm_pqueue * const queue,
 		  struct ttm_pqueue_entry * const entry)
 {
 	struct rb_root * const tree = &queue->tree;
+	struct rb_node **place = NULL, *parent = NULL;
+	struct ttm_pqueue_entry *test = ttm_prio_search_rb(tree, entry->score,
+								&parent, &place);
 
 	INIT_LIST_HEAD(&entry->list);
 
-	struct ttm_pqueue_entry *test = ttm_prio_search_rb(tree, entry->score);
-
 	if (!test)
-		ttm_prio_insert_rb(tree, entry);
+		ttm_prio_insert_rb(tree, entry, parent, place);
 	else
 		list_add_tail(&entry->list, &test->list);
 }
