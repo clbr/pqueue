@@ -31,14 +31,18 @@
 #include "list.h"
 #include "rbtree.h"
 
+/**
+ * struct ttm_pqueue - zero-initialize it when allocating
+ */
+
 struct ttm_pqueue {
 	struct rb_root tree;
 };
 
 struct ttm_pqueue_entry {
+	unsigned long long score;
 	struct rb_node node;
 	struct list_head list;
-	unsigned long long score;
 };
 
 /**
