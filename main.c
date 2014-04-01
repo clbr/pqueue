@@ -19,7 +19,8 @@ int main() {
 
 	printf("Add entries like [score value]\n");
 
-	struct rb_root tree = RB_ROOT;
+	struct ttm_pqueue queue;
+	queue.tree = RB_ROOT;
 
 	char buf[160];
 	while (fgets(buf, 160, stdin)) {
@@ -40,15 +41,15 @@ int main() {
 		new->p.score = score;
 		strncpy(new->value, ptr, 10);
 
-		ttm_prio_add(&tree, &new->p);
+		ttm_prio_add(&queue, &new->p);
 	}
 
-	struct ttm_pqueue_entry *tmp = ttm_prio_query_lowest(&tree);
-	if (tmp) ttm_prio_remove(&tree, tmp);
+	struct ttm_pqueue_entry *tmp = ttm_prio_query_lowest(&queue);
+	if (tmp) ttm_prio_remove(&queue, tmp);
 
 	puts("Removed first. Cool, now checking 'em");
 
-	struct rb_node *it = rb_first(&tree);
+	struct rb_node *it = rb_first(&queue.tree);
 	for (; it; it = rb_next(it)) {
 		struct ttm_pqueue_entry *cur = container_of(it, struct ttm_pqueue_entry, node);
 		struct entry *foo = container_of(cur, struct entry, p);

@@ -70,8 +70,10 @@ static struct ttm_pqueue_entry *ttm_prio_search_rb(struct rb_root *root, unsigne
 	return NULL;
 }
 
-void ttm_prio_add(struct rb_root * const tree, struct ttm_pqueue_entry * const entry)
+void ttm_prio_add(struct ttm_pqueue * const queue, struct ttm_pqueue_entry * const entry)
 {
+	struct rb_root * const tree = &queue->tree;
+
 	INIT_LIST_HEAD(&entry->list);
 
 	struct ttm_pqueue_entry *test = ttm_prio_search_rb(tree, entry->score);
@@ -82,8 +84,9 @@ void ttm_prio_add(struct rb_root * const tree, struct ttm_pqueue_entry * const e
 		list_add_tail(&entry->list, &test->list);
 }
 
-struct ttm_pqueue_entry *ttm_prio_query_lowest(const struct rb_root * const root)
+struct ttm_pqueue_entry *ttm_prio_query_lowest(const struct ttm_pqueue * const queue)
 {
+	const struct rb_root * const root = &queue->tree;
 	struct rb_node *node;
 
 	node = rb_first(root);
@@ -93,8 +96,10 @@ struct ttm_pqueue_entry *ttm_prio_query_lowest(const struct rb_root * const root
 	return container_of(node, struct ttm_pqueue_entry, node);
 }
 
-void ttm_prio_remove(struct rb_root * const tree, struct ttm_pqueue_entry * const entry)
+void ttm_prio_remove(struct ttm_pqueue * const queue, struct ttm_pqueue_entry * const entry)
 {
+	struct rb_root * const tree = &queue->tree;
+
 	if (list_empty(&entry->list)) {
 		rb_erase(&entry->node, tree);
 	} else {
