@@ -49,19 +49,10 @@ int main() {
 
 	puts("Removed first. Cool, now checking 'em");
 
-	struct rb_node *it = rb_first(&queue.tree);
-	for (; it; it = rb_next(it)) {
-		struct ttm_pqueue_entry *cur = container_of(it, struct ttm_pqueue_entry, node);
-		struct entry *foo = container_of(cur, struct entry, p);
-		printf("Score %llu val %s\n", cur->score, foo->value);
-
-		if (!list_empty(&cur->list)) {
-			struct ttm_pqueue_entry *mine;
-			list_for_each_entry(mine, &cur->list, list) {
-				foo = container_of(mine, struct entry, p);
-				printf("underScore %llu val %s\n", mine->score, foo->value);
-			}
-		}
+	tmp = ttm_prio_query_lowest(&queue);
+	for (; tmp; tmp = ttm_prio_query_next(tmp)) {
+		struct entry *foo = container_of(tmp, struct entry, p);
+		printf("Score %llu val %s\n", tmp->score, foo->value);
 	}
 
 	return 0;
