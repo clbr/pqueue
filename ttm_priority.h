@@ -65,4 +65,12 @@ struct ttm_pqueue_entry *ttm_prio_query_lowest(const struct ttm_pqueue * const q
 
 void ttm_prio_remove(struct ttm_pqueue * const queue, struct ttm_pqueue_entry * const entry);
 
+/**
+ * ttm_prio_query_next - walk the queue
+ *
+ * Returns NULL if there is no next entry.
+ */
+
+struct ttm_pqueue_entry *ttm_prio_query_next(struct ttm_pqueue_entry * const entry);
+
 #endif

@@ -114,3 +114,23 @@ void ttm_prio_remove(struct ttm_pqueue * const queue,
 		RB_CLEAR_NODE(&entry->node);
 	}
 }
+
+struct ttm_pqueue_entry *ttm_prio_query_next(struct ttm_pqueue_entry * const entry)
+{
+	struct ttm_pqueue_entry *next = list_next_entry(entry, list);
+	struct rb_node *node;
+
+	if (list_empty(&entry->list)) {
+		node = rb_next(&entry->node);
+		if (!node)
+			return NULL;
+		return container_of(node, struct ttm_pqueue_entry, node);
+	} else if (!RB_EMPTY_NODE(&next->node)) {
+		node = rb_next(&next->node);
+		if (!node)
+			return NULL;
+		return container_of(node, struct ttm_pqueue_entry, node);
+	} else {
+		return next;
+	}
+}
