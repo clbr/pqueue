@@ -77,6 +77,7 @@ void ttm_prio_add(struct ttm_pqueue * const queue,
 								&parent, &place);
 
 	INIT_LIST_HEAD(&entry->list);
+	RB_CLEAR_NODE(&entry->node);
 
 	if (!test)
 		ttm_prio_insert_rb(tree, entry, parent, place);
@@ -110,5 +111,6 @@ void ttm_prio_remove(struct ttm_pqueue * const queue,
 
 		rb_replace_node(&entry->node, &next->node, tree);
 		list_del_init(&entry->list);
+		RB_CLEAR_NODE(&entry->node);
 	}
 }
