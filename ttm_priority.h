@@ -45,6 +45,8 @@ struct ttm_pqueue_entry {
 	struct list_head list;
 };
 
+void ttm_prio_init_entry(struct ttm_pqueue_entry * const entry);
+
 /**
  * ttm_prio_add - add this bo to the priority queue
  */

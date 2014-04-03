@@ -115,6 +115,13 @@ void ttm_prio_remove(struct ttm_pqueue * const queue,
 	}
 }
 
+void ttm_prio_init_entry(struct ttm_pqueue_entry * const entry)
+{
+	entry->score = 0;
+	RB_CLEAR_NODE(&entry->node);
+	INIT_LIST_HEAD(&entry->list);
+}
+
 struct ttm_pqueue_entry *ttm_prio_query_next(struct ttm_pqueue_entry * const entry)
 {
 	struct ttm_pqueue_entry *next = list_next_entry(entry, list);
