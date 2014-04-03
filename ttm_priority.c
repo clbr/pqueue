@@ -73,11 +73,12 @@ void ttm_prio_add(struct ttm_pqueue * const queue,
 {
 	struct rb_root * const tree = &queue->tree;
 	struct rb_node **place = NULL, *parent = NULL;
-	struct ttm_pqueue_entry *test = ttm_prio_search_rb(tree, entry->score,
-								&parent, &place);
+	struct ttm_pqueue_entry *test;
 
-	INIT_LIST_HEAD(&entry->list);
-	RB_CLEAR_NODE(&entry->node);
+	if (ttm_prio_is_queued(entry))
+		ttm_prio_remove(queue, entry);
+
+	test = ttm_prio_search_rb(tree, entry->score, &parent, &place);
 
 	if (!test)
 		ttm_prio_insert_rb(tree, entry, parent, place);
@@ -108,8 +109,9 @@ void ttm_prio_remove(struct ttm_pqueue * const queue,
 		struct ttm_pqueue_entry *next = list_first_entry(&entry->list,
 								 struct ttm_pqueue_entry,
 								 list);
+		if (RB_EMPTY_NODE(&next->node))
+			rb_replace_node(&entry->node, &next->node, tree);
 
-		rb_replace_node(&entry->node, &next->node, tree);
 		list_del_init(&entry->list);
 		RB_CLEAR_NODE(&entry->node);
 	}
