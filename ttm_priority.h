@@ -73,4 +73,12 @@ void ttm_prio_remove(struct ttm_pqueue * const queue, struct ttm_pqueue_entry * 
 
 struct ttm_pqueue_entry *ttm_prio_query_next(struct ttm_pqueue_entry * const entry);
 
+/**
+ * ttm_prio_is_queued - test if an entry is in the queue.
+ *
+ * Returns 1 if it is, 0 if not.
+ */
+
+int ttm_prio_is_queued(const struct ttm_pqueue_entry * const entry);
+
 #endif

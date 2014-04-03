@@ -134,3 +134,8 @@ struct ttm_pqueue_entry *ttm_prio_query_next(struct ttm_pqueue_entry * const ent
 		return next;
 	}
 }
+
+int ttm_prio_is_queued(const struct ttm_pqueue_entry * const entry)
+{
+	return !(list_empty(&entry->list) && RB_EMPTY_NODE(&entry->node));
+}
