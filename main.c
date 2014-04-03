@@ -40,6 +40,7 @@ int main() {
 		struct entry *new = calloc(1, sizeof(struct entry));
 		new->p.score = score;
 		strncpy(new->value, ptr, 10);
+		ttm_prio_init_entry(&new->p);
 
 		ttm_prio_add(&queue, &new->p);
 	}
