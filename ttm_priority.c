@@ -105,6 +105,7 @@ void ttm_prio_remove(struct ttm_pqueue * const queue,
 
 	if (list_empty(&entry->list)) {
 		rb_erase(&entry->node, tree);
+		RB_CLEAR_NODE(&entry->node);
 	} else {
 		struct ttm_pqueue_entry *next = list_first_entry(&entry->list,
 								 struct ttm_pqueue_entry,
