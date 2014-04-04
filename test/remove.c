@@ -35,26 +35,31 @@ int main() {
 	}
 
 	count(ttm_prio_query_lowest(&q), 10);
+	puts("First add ok");
 
 	entries[1].score = 7;
 	ttm_prio_add(&q, &entries[1]);
 
 	count(ttm_prio_query_lowest(&q), 10);
+	puts("Update 1 ok");
 
 	entries[4].score = 7;
 	ttm_prio_add(&q, &entries[4]);
 
 	count(ttm_prio_query_lowest(&q), 10);
+	puts("Update 2 ok");
 
 	entries[5].score = 7;
 	ttm_prio_add(&q, &entries[5]);
 
 	count(ttm_prio_query_lowest(&q), 10);
+	puts("Update 3 ok");
 
 	entries[6].score = 145;
 	ttm_prio_add(&q, &entries[6]);
 
 	count(ttm_prio_query_lowest(&q), 10);
+	puts("Update 4 ok");
 
 	ttm_prio_remove(&q, &entries[3]);
 	ttm_prio_remove(&q, &entries[1]);
