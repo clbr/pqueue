@@ -1,7 +1,7 @@
 SRC = $(wildcard *.c)
 TARGETS = $(SRC:.c=)
 
-CFLAGS += -Wall -Wextra
+CFLAGS += -Wall -Wextra -g
 CPPFLAGS += -I ..
 
 .PHONY: all clean
