@@ -1,5 +1,12 @@
 #include "test.h"
 
+static void count(struct ttm_pqueue_entry *it, const unsigned expected) {
+
+	unsigned i;
+	for (i = 0; it; it = ttm_prio_query_next(it)) i++;
+	if (i != expected) fail("Wrong amount, got %u, expected %u\n", i, expected);
+}
+
 int main() {
 
 	struct ttm_pqueue q;
@@ -27,17 +34,27 @@ int main() {
 		ttm_prio_add(&q, &entries[i]);
 	}
 
+	count(ttm_prio_query_lowest(&q), 10);
+
 	entries[1].score = 7;
 	ttm_prio_add(&q, &entries[1]);
+
+	count(ttm_prio_query_lowest(&q), 10);
 
 	entries[4].score = 7;
 	ttm_prio_add(&q, &entries[4]);
 
+	count(ttm_prio_query_lowest(&q), 10);
+
 	entries[5].score = 7;
 	ttm_prio_add(&q, &entries[5]);
 
+	count(ttm_prio_query_lowest(&q), 10);
+
 	entries[6].score = 145;
 	ttm_prio_add(&q, &entries[6]);
+
+	count(ttm_prio_query_lowest(&q), 10);
 
 	ttm_prio_remove(&q, &entries[3]);
 	ttm_prio_remove(&q, &entries[1]);
@@ -54,9 +71,7 @@ int main() {
 	struct ttm_pqueue_entry *it = ttm_prio_query_lowest(&q);
 	if (it->score != 6) fail("Wrong lowest score, got %u, expected %u\n",
 				it->score, 6);
-	for (i = 0; it; it = ttm_prio_query_next(it), i++) {
-	}
-	if (i != 9) fail("Wrong amount, got %u, expected %u\n", i, 9);
+	count(it, 8);
 
 	return 0;
 }
