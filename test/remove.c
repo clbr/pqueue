@@ -42,6 +42,15 @@ int main() {
 	ttm_prio_remove(&q, &entries[3]);
 	ttm_prio_remove(&q, &entries[1]);
 
+	if (ttm_prio_is_queued(&entries[3])) fail("A removed was queued?\n");
+	if (ttm_prio_is_queued(&entries[1])) fail("A removed was queued?\n");
+
+	for (i = 0; i < 10; i++) {
+		if (i == 1 || i == 3)
+			continue;
+		if (!ttm_prio_is_queued(&entries[i])) fail("An added was not queued?\n");
+	}
+
 	struct ttm_pqueue_entry *it = ttm_prio_query_lowest(&q);
 	if (it->score != 6) fail("Wrong lowest score, got %u, expected %u\n",
 				it->score, 6);
